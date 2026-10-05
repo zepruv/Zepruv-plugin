@@ -1,0 +1,32 @@
+name: PR checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  security:
+    name: Security
+    uses: zepruv/.github/.github/workflows/security.yml@main
+    with:
+      language: node
+
+  plugin:
+    name: Plugin files
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check manifests, skills and the MCP address
+        run: node scripts/check-plugin.mjs

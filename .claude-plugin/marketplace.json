@@ -1,0 +1,14 @@
+{
+  "name": "zepruv",
+  "description": "Zepruv: connect your AI (Claude Code, Cursor, VS Code and other MCP clients) to your Zepruv interview-prep Workspace.",
+  "owner": {
+    "name": "Zepruv"
+  },
+  "plugins": [
+    {
+      "name": "zepruv",
+      "source": "./",
+      "description": "Zepruv Workspace for your AI: the connection plus skills for scribes, slates, atlases, packs, collections and READMEs."
+    }
+  ]
+}
