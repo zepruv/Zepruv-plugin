@@ -77,11 +77,23 @@ A connection may be limited to a single collection. Then:
 - `workspace_create_pack` makes a new collection, so it is refused. Build the pack's parts inside the granted collection instead (see the `zepruv-system-design-pack` skill).
 - If the user wants something outside the collection, tell them to reconnect with a wider grant.
 
-## Concurrent edits
+## Concurrent edits: the user and other agents
 
-The user may be editing the same document. The server merges by re-reading the latest version and re-applying your change. Consequences:
-- A heading- or phrase-based edit can fail if the user just changed that text. Re-read, then retry with the new text.
-- After a write, do not assume the document equals your last read plus your change. Re-read before the next dependent edit.
+A document can be changed while you work on it: by the user in the editor, by another chat, or by other agents or sub-agents using the same connection.
+
+What the server does:
+- A structured edit (a heading, a phrase, a patch) that meets a newer version is applied again on the latest content, up to three times. It is saved, and the result carries a **`conflict`** note. When you see it: the other change is kept and so is yours, but **what you read earlier is out of date**. Read the document again, check the result (`workspace_compare_versions` shows what changed), and tell the user that someone else was editing at the same time.
+- A whole-text rewrite (`replace_all`) is **refused** on conflict (nothing is saved), because replacing the text would erase the other change. Read again, merge their change into yours, and decide with the user what to keep.
+- If the document keeps changing under the edit, it is refused too. Wait for the other editor to finish, then redo it.
+
+When more than one agent works at the same time:
+- **One writer per document.** Give each agent its own documents. A diagram inside a scribe (`workspace_create_inline_design`) is a document of its own, so several agents can each make diagrams for the same scribe without clashing; one agent (the owner) edits the scribe's text, places the cards (`workspace_embed_design`) and checks that every diagram is `shownInText: true`.
+- **Never send two edits to the same document in parallel.** Do them one after another, and re-read between dependent edits.
+- **No `replace_all` while anyone else may be editing.** Use the heading and phrase operations.
+- **Do not undo blindly.** `workspace_undo_last_agent_edit` restores the version before the last AI edit, which may be another agent's, and discards everything saved after it. Check `workspace_list_versions` first.
+- After a multi-agent job, read the result once and tell the user what each agent changed and about any `conflict` notes.
+
+After a write, do not assume the document equals your last read plus your change. Re-read before the next dependent edit.
 
 ## Versions, comparing and rolling back
 
@@ -114,4 +126,4 @@ After writing, say what you changed in one or two sentences, name the document, 
 - `workspace_add_image` takes the image as base64 (PNG, JPEG, WebP or GIF, up to 3 MB). You cannot fetch an image from a web address.
 - You work only inside the collections the user allowed. Anything else does not exist for you: do not try to list, search or create outside them, and tell the user to reconnect with different collections if they need that. You cannot create collections, move things out, delete, share or publish.
 - With several allowed collections, name the one to create in. Searching covers all of them.
-- If the user edits the same document at the same time, structured edits are merged automatically; a whole-text rewrite (`replace_all`) is refused on conflict, so read again and decide what to keep.
+- If the user or another agent edits the same document at the same time, see "Concurrent edits" above: structured edits are merged and report a `conflict`; a whole-text rewrite (`replace_all`) is refused.
