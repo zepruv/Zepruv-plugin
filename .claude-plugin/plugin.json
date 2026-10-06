@@ -1,6 +1,6 @@
 {
   "name": "zepruv",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Connect your AI to your Zepruv Workspace: build and edit scribes, slates, atlases, packs, collections and READMEs, with skills that teach the right workflow.",
   "author": { "name": "Zepruv" },
   "homepage": "https://zepruv.me",

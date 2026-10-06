@@ -35,7 +35,7 @@ All take `id` and `op`. Headings are matched by their text, any level, case-inse
 | `insert_after_text` | `anchor`, `markdown` | Adds a new block after the line containing `anchor`. |
 | `insert_before_text` | `anchor`, `markdown` | Adds a new block before the line containing `anchor`. |
 | `replace_text` | `find`, `replacement`, optional `all` | Exact find and replace. Must be unique unless `all: true`. |
-| `replace_all` | `markdown` | Replaces the whole text. Last resort. |
+| `replace_all` | `markdown` | Replaces the whole text. Last resort. If the scribe has diagram cards (`![..](zws-design://<id> ...)`), keep every card in the new markdown: an edit that would drop one is refused (`DESIGNS_WOULD_BE_REMOVED`), because the diagram would stay in the scribe but no longer be shown. Pass `removeDesigns: true` only when the user asked to take a diagram out of the text. |
 
 Examples:
 
@@ -89,6 +89,8 @@ A card is `![caption](zws-design://<design id> "h=380")`. Add one with `workspac
 Placement: give one of `afterHeading`, `afterText` (after the paragraph containing the phrase), `beforeText`, `replaceText` (replace a placeholder line such as `[diagram here]` with the card). With none, the card goes at the end. `height` 120-900; 380 for atlases, 320-340 for slates.
 
 **A diagram only this scribe needs: make it inline.** `workspace_create_inline_design {"scribeId", "kind": "atlas" | "slate", "title", "design" | "elements", "afterHeading": "..."}` creates the diagram **inside the scribe** and puts its card in the text in one step. An inline diagram belongs to the scribe: it is not listed in the collection and search never returns it; it moves, copies and shares with the scribe. See a scribe's diagrams with `workspace_list_inline_designs` (or `inlineDesigns` when you read the scribe), and change one with `workspace_update_system_design` / `workspace_update_slate` using its id. Use `workspace_create_system_design` / `workspace_create_slate` plus `workspace_embed_design` only when several scribes should show the same design.
+
+**Check that every diagram is in the text.** After making diagrams for a scribe, call `workspace_list_inline_designs {"scribeId"}`: each item must say `shownInText: true`. Anything `false` is in the scribe but invisible to the reader (the editor shows it as "not in text"): place it with `workspace_embed_design` under the heading that discusses it. Write the scribe's full text first and make the diagrams after it, or keep the cards when you rewrite it.
 
 Rules:
 - The design must be in the same collection as the scribe (and in the README folder if the scribe is). If it is not, `workspace_copy_document {"id": "<design>", "collection": "<scribe's collection>"}` and embed the copy, after asking the user.
