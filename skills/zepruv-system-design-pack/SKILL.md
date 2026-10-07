@@ -162,6 +162,17 @@ Follow-up properties patch (step 7):
 
 Property fields: `name`, `nodeType` (`Standard` | `Custom` | `External API`), `category`, `technology`, `capacity`, `replicas`, `notes`. Fill at least technology on stores, queues and the core service.
 
+## Check what you made (you cannot see the canvas)
+
+Every call that creates or changes a slate or atlas returns a `layout` field. `"ok"` means nothing is wrong. Otherwise it lists problems, each with the element `ids` and a `fix`:
+
+- `overlap`, `stacked`, `no_position`: things on top of each other. Move them, or run `workspace_arrange_atlas` for an atlas.
+- `text_overflow`, `label_too_long`, `too_small`: text will be cut off. Enlarge the shape, shorten the label (put detail in `subtitle` or notes), or lower `style.fontSize`.
+- `line_through_component`, `many_line_crossings`: a line is hard to follow. `workspace_arrange_atlas` routes lines around components.
+- `low_contrast`, `dangling_connector`, `straddles_section`, `far_away`: fix the colours, the connector's end points, or the position.
+
+Fix what is listed, then look at `layout` in the next result (or call `workspace_check_layout {"id"}`). Stop when it says `"ok"`, and do not loop more than three times. Text fit is an estimate (no fonts are loaded), so a rare warning may be cautious: change it only if it is cheap to do. Tell the user about any warning you left.
+
 ## Interview guide
 
 `design.guide` is either a template id (`"classic_7_step"`, `"lightweight_4_step"`) or a custom object `{name, steps: [{id?, title, prompts[], notes?, status?}]}`. Prefer a custom guide with topic-specific prompts (4-7 steps, 1-4 prompts each). Step `status`: `pending` | `active` | `done` | `skipped`. Later edits: `setGuide` (template id or object) replaces it; `updateGuideSteps: [{"id": "algo", "status": "done", "notes": "..."}]` ticks steps off.

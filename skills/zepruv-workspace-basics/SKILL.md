@@ -95,6 +95,10 @@ When more than one agent works at the same time:
 
 After a write, do not assume the document equals your last read plus your change. Re-read before the next dependent edit.
 
+## You cannot see the canvas: use `layout`
+
+Results of creating or changing a slate or atlas carry `layout` (`"ok"` or a list of problems with ids and fixes), and `workspace_check_layout {"id"}` gives the same on demand. Read it after every diagram change and fix what it lists (details in the `zepruv-system-design-pack` skill). For scribes, `workspace_list_inline_designs` tells you which diagrams are `shownInText`.
+
 ## Versions, comparing and rolling back
 
 Every write checkpoints a version first and returns `versionId` and `revision`. Note them in your reply.
