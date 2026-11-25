@@ -42,9 +42,11 @@ The user chose permissions when connecting. Each tool needs one:
 
 | Permission | Tools |
 |---|---|
-| `workspace.read` | search, get, list, readme read, formats, components, versions, compare |
+| `workspace.read` | search, get, list, readme read, formats (scribe, slate, atlas, sheet, slides, pack), components, versions, compare |
 | `scribe.write` | `workspace_create_note`, `workspace_append_note`, `workspace_edit_note`, `workspace_embed_design`, `workspace_add_image`, `workspace_rename_document` |
 | `slate.write` | `workspace_create_slate`, `workspace_update_slate` |
+| `sheet.write` | `workspace_create_sheet`, `workspace_update_sheet` (tabs, formulas, dropdowns, merged cells, comments, colours, charts) |
+| `slides.write` | `workspace_create_slides`, `workspace_update_slides` (themes, backgrounds with movement, designed pictures, notes, transitions) |
 | `atlas.write` | `workspace_create_system_design`, `workspace_update_system_design`, `workspace_create_custom_component`, `workspace_update_custom_component` |
 | `collections.write` | `workspace_update_collection`, `workspace_enable_readme_folder`, `workspace_move_document`, `workspace_copy_document` |
 | `readme.write` | `workspace_write_readme`, and anything with `readmeFolder: true` |
